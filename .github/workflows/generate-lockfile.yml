@@ -1,0 +1,39 @@
+name: Generate package-lock.json
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and generate lockfile
+        run: |
+          # Try to use npm ci when possible, otherwise install to generate lockfile
+          npm ci --prefer-offline || npm install --legacy-peer-deps
+
+      - name: Commit package-lock.json if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git status --porcelain | grep -q "package-lock.json"; then
+            git add package-lock.json
+            git commit -m "chore: regenerate package-lock.json (CI)"
+            git push origin HEAD:main
+          else
+            echo "No changes to package-lock.json"
+          fi
