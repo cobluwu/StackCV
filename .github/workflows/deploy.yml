@@ -27,8 +27,18 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Debug info
+        run: |
+          node -v
+          npm -v
+          echo "--- package.json ---"
+          cat package.json || true
+          echo "--- package-lock.json ---"
+          cat package-lock.json || true
+
+      - name: Install dependencies (ci or fallback)
+        run: |
+          npm ci || npm install --legacy-peer-deps
 
       - name: Build
         run: npm run build
