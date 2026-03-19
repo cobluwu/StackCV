@@ -3,7 +3,7 @@ import { User } from "../types";
 
 // Using a common test key for demonstration. 
 // In production, this would be process.env.RAZORPAY_KEY_ID
-const RAZORPAY_KEY_ID = ''; 
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || '';
 
 declare global {
   interface Window {
