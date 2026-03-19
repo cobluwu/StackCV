@@ -1,4 +1,4 @@
-name: CI
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -9,29 +9,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Build
-        run: npm run build
+        run: |
+          # Add your build commands here
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./path/to/artifacts
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.github-pages-deploy.outputs.page_url }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Deploy to GitHub Pages
-        id: github-pages-deploy
-        run: |
-          npm install -g gh-pages
-          gh-pages -d dist
-
-          echo "Deployed to ${{ steps.github-pages-deploy.outputs.page_url }}"
+        uses: actions/deploy-pages@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
